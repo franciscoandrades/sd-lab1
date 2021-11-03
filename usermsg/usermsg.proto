@@ -1,0 +1,46 @@
+syntax = "proto3";
+package usermsg;
+
+option go_package= "distribuidos/go-usermsg-grpc;go_usermsg_grpc";
+
+message Message {    //con message escribimos una estructura del mensaje "Message"
+    string Name = 1;
+    
+}
+
+message User{     //con message escribimos una estructura del mensaje "Message"
+    string Name = 1;
+    int32 ID =2;
+    
+}
+
+message Jugada_1{    //mensaje enviado por el jugador en luz verde. luz roja
+    int32 ID = 1;    //ID jugador
+    int32 n_elegido = 2; //número elegido por el jugador
+}
+
+message Resp_1{
+    int32 binario = 1; // 0 si el jugador eligió un número igual o mayor al Lider
+    int32 ronda= 2; //la ronda la cual se está jugando
+    string est_juego = 4; //estado del juego (en caso de que sea el único en sobrevivir y ganar)
+}
+
+message Req{
+    string req = 1;
+}
+
+message Monto{
+    int32 monto =1; 
+}
+
+
+
+service LiderServices {  //con los service definimos los Servicios del Lider
+    rpc NewPlayer(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User
+    rpc Luz_Roja_Verde(Jugada_1) returns (Resp_1){};
+    rpc Pozo(Req) returns (Monto){};
+}
+
+service PozoServices {
+    rpc MontoPozo(Req) returns (Monto){};
+}

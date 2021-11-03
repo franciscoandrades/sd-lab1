@@ -1,0 +1,2 @@
+Jugador_1 Ronda_1 300000
+Jugador_2 Ronda_2 400000
