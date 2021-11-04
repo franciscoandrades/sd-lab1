@@ -1,0 +1,15 @@
+Maquina = dist41
+clave = q~%YbF+9u-A!PC/y
+IP = 10.6.40.181
+
+Maquina = dist42
+clave = B7u,!qp/6=<[5rn*
+IP = 10.6.40.182
+
+Maquina = dist43
+clave = L8h=z+K3RZGFe%rg
+IP = 10.6.40.183
+
+Maquina = dis44
+clave = vK;bgr>#~4xd,)8j
+IP = 10.6.40.184

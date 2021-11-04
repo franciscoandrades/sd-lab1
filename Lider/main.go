@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"strconv"
 	"time"
 
 	"google.golang.org/grpc"
@@ -16,8 +17,9 @@ var n_etapa1 int32 = 0
 var user_id int32 = 0
 
 const (
-	port    = ":50000"
-	address = "localhost: 50011"
+	port              = ":50000"
+	address_pozo      = "localhost: 50011"
+	address_name_node = "localhost: 50020"
 )
 
 func choose_number() {
@@ -44,11 +46,20 @@ func (s *UserManagementServer) Luz_Roja_Verde(ctx context.Context, in *pb.Jugada
 	if n_persona >= n_etapa1 {
 		bin = 0
 	}
+	conn, err := grpc.Dial(address_name_node, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Did not connect: %v", err)
+	}
+	defer conn.Close()
+	ServiceClient := pb.NewNameNodeClient(conn)
+	_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.ID, Juego: "1", Ronda: strconv.Itoa(int(rondas_luz_verde)), Jugada: in.GetNElegido()})
+
+	conn.Close()
 	return &pb.Resp_1{Binario: bin, Ronda: rondas_luz_verde, EstJuego: "Se juega"}, nil
 }
 
 func (s *UserManagementServer) Pozo(ctx context.Context, in *pb.Req) (*pb.Monto, error) {
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address_pozo, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}
