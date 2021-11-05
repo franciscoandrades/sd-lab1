@@ -20,10 +20,10 @@ const (
 	address_name_node = "localhost: 50020"
 )
 
-func choose_number() int32 {
+func choose_number() {
 	rand.Seed(time.Now().UTC().UnixNano())
-	//n_etapa1 = int32(rand.Intn(4) + 6)
-	return int32(rand.Intn(4) + 6)
+	n_etapa1 = int32(rand.Intn(4) + 6)
+	//return int32(rand.Intn(4) + 6)
 }
 
 type UserManagementServer struct {
