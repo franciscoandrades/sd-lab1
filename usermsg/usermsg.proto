@@ -4,23 +4,37 @@ package usermsg;
 option go_package= "distribuidos/go-usermsg-grpc;go_usermsg_grpc";
 
 message Message {    //con message escribimos una estructura del mensaje "Message"
-    string Name = 1;
+    string play = 1;  //mensaje con el que el jugador acepta seguir jugando
+    
 }
 
-message User{     //con message escribimos una estructura del mensaje "Message"
-    string Name = 1;
-    int32 ID =2;
+message User{     
+    int32 ID =1;  //ID del jugador
+    
 }
 
-message Jugada_1{    //mensaje enviado por el jugador en luz verde. luz roja
+message Jugada1{    
     int32 ID = 1;    //ID jugador
-    int32 n_elegido = 2; //número elegido por el jugador
+    int32 jugada = 2; //número elegido por el jugador
+    int32 ronda =3; // ronda a la que corresponde la jugada
+    int32 etapa = 4; //etapa a la que correponde la jugada
+    int32 suma = 5; //suma de las jugadas hasta el momento
 }
 
-message Resp_1{
-    int32 binario = 1; // 0 si el jugador eligió un número igual o mayor al Lider
-    int32 ronda= 2; //la ronda la cual se está jugando
-    string est_juego = 4; //estado del juego (en caso de que sea el único en sobrevivir y ganar)
+message Jugada{    
+    int32 ID = 1;    //ID jugador
+    int32 jugada = 2; //número elegido por el jugador
+    int32 ronda =3; // ronda a la que corresponde la jugada
+    int32 etapa = 4; //etapa a la que correponde la jugada
+}
+
+message Resp{
+    int32 survive = 1; // 0 si el jugador murio, 1 si sigue vivo
+    int32 partida =2 ; // 1 si la partida sigue en curso, 0 cc
+    int32 juego = 3; //1 hay más de un jugador en competencia, 0 es el único jugador restante
+    int32 ronda =4; 
+    int32 etapa =5; 
+    int32 suma =6;
 }
 
 message Req{
@@ -31,12 +45,41 @@ message Monto{
     int32 monto = 1; 
 }
 
+<<<<<<< HEAD
+=======
+
+message Registro{
+    string response =1;
+}
+
+message Check{
+    string check =1;
+}
+
+message Data{
+    int32 etapa =1;
+    int32 ronda=2; //cantidad de rondas
+    int32 jugada= 3;
+}
+
+>>>>>>> 0a815c1a9083d7314e6f851fedd9f8e06063b024
 service LiderServices {  //con los service definimos los Servicios del Lider
-    rpc NewPlayer(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User
-    rpc Luz_Roja_Verde(Jugada_1) returns (Resp_1){};
+    rpc Play(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User
+    rpc Etapa1(Jugada1) returns (Resp){};
+    rpc Etapa2(Jugada) returns (Resp){};
+    rpc Etapa3(Jugada) returns (Resp){};
     rpc Pozo(Req) returns (Monto){};
+    rpc Continue(Message) returns(Check){};
 }
 
 service PozoServices {
     rpc MontoPozo(Req) returns (Monto){};
+}
+
+service NameNode{
+    rpc JugadaPlayer(Jugada) returns(Registro){};
+}
+service DataNode{
+    rpc RegistrarInfo(Jugada) returns(Check){};
+    rpc PlayerInfo(User) returns(Data){};
 }

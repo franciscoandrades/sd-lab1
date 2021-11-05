@@ -11,13 +11,13 @@ import (
 	"google.golang.org/grpc"
 )
 
-var rondas_luz_verde int32 = 0
 var n_etapa1 int32 = 0
 var user_id int32 = 0
 
 const (
-	port    = ":50000"
-	address = "localhost: 50011"
+	port              = ":50000"
+	address_pozo      = "localhost: 50011"
+	address_name_node = "localhost: 50020"
 )
 
 func choose_number() int32 {
@@ -30,27 +30,42 @@ type UserManagementServer struct {
 	pb.UnimplementedLiderServicesServer //UnimplementedLiderServices está en el usermsg_grpc.pb, aquí se debe implementar
 }
 
-func (s *UserManagementServer) NewPlayer(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar el método NewPlayer
-	log.Printf("Nombre del Usuario: %v", in.GetName())
+func (s *UserManagementServer) Play(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar del método Play
 	user_id = user_id + 1
-	return &pb.User{Name: in.GetName(), ID: user_id}, nil
+	log.Printf("Jugador %d acepta jugar", user_id)
+	return &pb.User{ID: user_id}, nil
 }
 
-func (s *UserManagementServer) Luz_Roja_Verde(ctx context.Context, in *pb.Jugada_1) (*pb.Resp_1, error) {
+func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.Resp, error) { //implementacion del método Etapa1
 	var bin int32 = 1
-	var n_persona int32 = in.GetNElegido()
-	
-	n_etapa1 = choose_number()
-	rondas_luz_verde = rondas_luz_verde + 1
-	log.Printf("El Lider eligió %d y la persona eligio %d", n_etapa1, n_persona)
-	if n_persona >= n_etapa1 {
+	var jugada int32 = in.GetJugada()
+	choose_number()
+	partida := 1
+	log.Printf("El Lider eligió %d y la persona eligio %d", n_etapa1, jugada)
+	if jugada >= n_etapa1 {
 		bin = 0
 	}
-	return &pb.Resp_1{Binario: bin, Ronda: rondas_luz_verde, EstJuego: "Se juega"}, nil
+	ronda := in.GetRonda() + 1
+
+	conn, err := grpc.Dial(address_name_node, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Did not connect: %v", err)
+	}
+	defer conn.Close()
+	ServiceClient := pb.NewNameNodeClient(conn)
+	_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.GetID(), Jugada: jugada, Ronda: ronda, Etapa: in.GetEtapa()})
+
+	if ronda == 4 {
+		if int(in.GetSuma()) < 21 {
+			bin = 0
+		}
+		partida = 0
+	}
+	return &pb.Resp{Survive: bin, Partida: int32(partida), Juego: 1, Ronda: ronda, Etapa: in.GetEtapa(), Suma: in.GetSuma()}, nil
 }
 
 func (s *UserManagementServer) Pozo(ctx context.Context, in *pb.Req) (*pb.Monto, error) {
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(address_pozo, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}

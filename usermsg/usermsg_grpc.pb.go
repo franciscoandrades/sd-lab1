@@ -18,9 +18,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LiderServicesClient interface {
-	NewPlayer(ctx context.Context, in *Message, opts ...grpc.CallOption) (*User, error)
-	Luz_Roja_Verde(ctx context.Context, in *Jugada_1, opts ...grpc.CallOption) (*Resp_1, error)
+	Play(ctx context.Context, in *Message, opts ...grpc.CallOption) (*User, error)
+	Etapa1(ctx context.Context, in *Jugada1, opts ...grpc.CallOption) (*Resp, error)
+	Etapa2(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error)
+	Etapa3(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error)
 	Pozo(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Monto, error)
+	Continue(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Check, error)
 }
 
 type liderServicesClient struct {
@@ -31,18 +34,36 @@ func NewLiderServicesClient(cc grpc.ClientConnInterface) LiderServicesClient {
 	return &liderServicesClient{cc}
 }
 
-func (c *liderServicesClient) NewPlayer(ctx context.Context, in *Message, opts ...grpc.CallOption) (*User, error) {
+func (c *liderServicesClient) Play(ctx context.Context, in *Message, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/NewPlayer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Play", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *liderServicesClient) Luz_Roja_Verde(ctx context.Context, in *Jugada_1, opts ...grpc.CallOption) (*Resp_1, error) {
-	out := new(Resp_1)
-	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Luz_Roja_Verde", in, out, opts...)
+func (c *liderServicesClient) Etapa1(ctx context.Context, in *Jugada1, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Etapa1", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *liderServicesClient) Etapa2(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Etapa2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *liderServicesClient) Etapa3(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Etapa3", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,13 +79,25 @@ func (c *liderServicesClient) Pozo(ctx context.Context, in *Req, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *liderServicesClient) Continue(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Check, error) {
+	out := new(Check)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Continue", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LiderServicesServer is the server API for LiderServices service.
 // All implementations must embed UnimplementedLiderServicesServer
 // for forward compatibility
 type LiderServicesServer interface {
-	NewPlayer(context.Context, *Message) (*User, error)
-	Luz_Roja_Verde(context.Context, *Jugada_1) (*Resp_1, error)
+	Play(context.Context, *Message) (*User, error)
+	Etapa1(context.Context, *Jugada1) (*Resp, error)
+	Etapa2(context.Context, *Jugada) (*Resp, error)
+	Etapa3(context.Context, *Jugada) (*Resp, error)
 	Pozo(context.Context, *Req) (*Monto, error)
+	Continue(context.Context, *Message) (*Check, error)
 	mustEmbedUnimplementedLiderServicesServer()
 }
 
@@ -72,14 +105,23 @@ type LiderServicesServer interface {
 type UnimplementedLiderServicesServer struct {
 }
 
-func (UnimplementedLiderServicesServer) NewPlayer(context.Context, *Message) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NewPlayer not implemented")
+func (UnimplementedLiderServicesServer) Play(context.Context, *Message) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Play not implemented")
 }
-func (UnimplementedLiderServicesServer) Luz_Roja_Verde(context.Context, *Jugada_1) (*Resp_1, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Luz_Roja_Verde not implemented")
+func (UnimplementedLiderServicesServer) Etapa1(context.Context, *Jugada1) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Etapa1 not implemented")
+}
+func (UnimplementedLiderServicesServer) Etapa2(context.Context, *Jugada) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Etapa2 not implemented")
+}
+func (UnimplementedLiderServicesServer) Etapa3(context.Context, *Jugada) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Etapa3 not implemented")
 }
 func (UnimplementedLiderServicesServer) Pozo(context.Context, *Req) (*Monto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Pozo not implemented")
+}
+func (UnimplementedLiderServicesServer) Continue(context.Context, *Message) (*Check, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Continue not implemented")
 }
 func (UnimplementedLiderServicesServer) mustEmbedUnimplementedLiderServicesServer() {}
 
@@ -94,38 +136,74 @@ func RegisterLiderServicesServer(s grpc.ServiceRegistrar, srv LiderServicesServe
 	s.RegisterService(&LiderServices_ServiceDesc, srv)
 }
 
-func _LiderServices_NewPlayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _LiderServices_Play_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Message)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LiderServicesServer).NewPlayer(ctx, in)
+		return srv.(LiderServicesServer).Play(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/usermsg.LiderServices/NewPlayer",
+		FullMethod: "/usermsg.LiderServices/Play",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LiderServicesServer).NewPlayer(ctx, req.(*Message))
+		return srv.(LiderServicesServer).Play(ctx, req.(*Message))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _LiderServices_Luz_Roja_Verde_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Jugada_1)
+func _LiderServices_Etapa1_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Jugada1)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LiderServicesServer).Luz_Roja_Verde(ctx, in)
+		return srv.(LiderServicesServer).Etapa1(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/usermsg.LiderServices/Luz_Roja_Verde",
+		FullMethod: "/usermsg.LiderServices/Etapa1",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LiderServicesServer).Luz_Roja_Verde(ctx, req.(*Jugada_1))
+		return srv.(LiderServicesServer).Etapa1(ctx, req.(*Jugada1))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LiderServices_Etapa2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Jugada)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LiderServicesServer).Etapa2(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.LiderServices/Etapa2",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LiderServicesServer).Etapa2(ctx, req.(*Jugada))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LiderServices_Etapa3_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Jugada)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LiderServicesServer).Etapa3(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.LiderServices/Etapa3",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LiderServicesServer).Etapa3(ctx, req.(*Jugada))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -148,6 +226,24 @@ func _LiderServices_Pozo_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LiderServices_Continue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Message)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LiderServicesServer).Continue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.LiderServices/Continue",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LiderServicesServer).Continue(ctx, req.(*Message))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LiderServices_ServiceDesc is the grpc.ServiceDesc for LiderServices service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -156,20 +252,32 @@ var LiderServices_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*LiderServicesServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "NewPlayer",
-			Handler:    _LiderServices_NewPlayer_Handler,
+			MethodName: "Play",
+			Handler:    _LiderServices_Play_Handler,
 		},
 		{
-			MethodName: "Luz_Roja_Verde",
-			Handler:    _LiderServices_Luz_Roja_Verde_Handler,
+			MethodName: "Etapa1",
+			Handler:    _LiderServices_Etapa1_Handler,
+		},
+		{
+			MethodName: "Etapa2",
+			Handler:    _LiderServices_Etapa2_Handler,
+		},
+		{
+			MethodName: "Etapa3",
+			Handler:    _LiderServices_Etapa3_Handler,
 		},
 		{
 			MethodName: "Pozo",
 			Handler:    _LiderServices_Pozo_Handler,
 		},
+		{
+			MethodName: "Continue",
+			Handler:    _LiderServices_Continue_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "usermsg.proto",
+	Metadata: "usermsg/usermsg.proto",
 }
 
 // PozoServicesClient is the client API for PozoServices service.
@@ -255,5 +363,213 @@ var PozoServices_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "usermsg.proto",
+	Metadata: "usermsg/usermsg.proto",
+}
+
+// NameNodeClient is the client API for NameNode service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type NameNodeClient interface {
+	JugadaPlayer(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Registro, error)
+}
+
+type nameNodeClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewNameNodeClient(cc grpc.ClientConnInterface) NameNodeClient {
+	return &nameNodeClient{cc}
+}
+
+func (c *nameNodeClient) JugadaPlayer(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Registro, error) {
+	out := new(Registro)
+	err := c.cc.Invoke(ctx, "/usermsg.NameNode/JugadaPlayer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// NameNodeServer is the server API for NameNode service.
+// All implementations must embed UnimplementedNameNodeServer
+// for forward compatibility
+type NameNodeServer interface {
+	JugadaPlayer(context.Context, *Jugada) (*Registro, error)
+	mustEmbedUnimplementedNameNodeServer()
+}
+
+// UnimplementedNameNodeServer must be embedded to have forward compatible implementations.
+type UnimplementedNameNodeServer struct {
+}
+
+func (UnimplementedNameNodeServer) JugadaPlayer(context.Context, *Jugada) (*Registro, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method JugadaPlayer not implemented")
+}
+func (UnimplementedNameNodeServer) mustEmbedUnimplementedNameNodeServer() {}
+
+// UnsafeNameNodeServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NameNodeServer will
+// result in compilation errors.
+type UnsafeNameNodeServer interface {
+	mustEmbedUnimplementedNameNodeServer()
+}
+
+func RegisterNameNodeServer(s grpc.ServiceRegistrar, srv NameNodeServer) {
+	s.RegisterService(&NameNode_ServiceDesc, srv)
+}
+
+func _NameNode_JugadaPlayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Jugada)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NameNodeServer).JugadaPlayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.NameNode/JugadaPlayer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NameNodeServer).JugadaPlayer(ctx, req.(*Jugada))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// NameNode_ServiceDesc is the grpc.ServiceDesc for NameNode service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var NameNode_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "usermsg.NameNode",
+	HandlerType: (*NameNodeServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "JugadaPlayer",
+			Handler:    _NameNode_JugadaPlayer_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "usermsg/usermsg.proto",
+}
+
+// DataNodeClient is the client API for DataNode service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type DataNodeClient interface {
+	RegistrarInfo(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Check, error)
+	PlayerInfo(ctx context.Context, in *User, opts ...grpc.CallOption) (*Data, error)
+}
+
+type dataNodeClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewDataNodeClient(cc grpc.ClientConnInterface) DataNodeClient {
+	return &dataNodeClient{cc}
+}
+
+func (c *dataNodeClient) RegistrarInfo(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Check, error) {
+	out := new(Check)
+	err := c.cc.Invoke(ctx, "/usermsg.DataNode/RegistrarInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dataNodeClient) PlayerInfo(ctx context.Context, in *User, opts ...grpc.CallOption) (*Data, error) {
+	out := new(Data)
+	err := c.cc.Invoke(ctx, "/usermsg.DataNode/PlayerInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// DataNodeServer is the server API for DataNode service.
+// All implementations must embed UnimplementedDataNodeServer
+// for forward compatibility
+type DataNodeServer interface {
+	RegistrarInfo(context.Context, *Jugada) (*Check, error)
+	PlayerInfo(context.Context, *User) (*Data, error)
+	mustEmbedUnimplementedDataNodeServer()
+}
+
+// UnimplementedDataNodeServer must be embedded to have forward compatible implementations.
+type UnimplementedDataNodeServer struct {
+}
+
+func (UnimplementedDataNodeServer) RegistrarInfo(context.Context, *Jugada) (*Check, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegistrarInfo not implemented")
+}
+func (UnimplementedDataNodeServer) PlayerInfo(context.Context, *User) (*Data, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PlayerInfo not implemented")
+}
+func (UnimplementedDataNodeServer) mustEmbedUnimplementedDataNodeServer() {}
+
+// UnsafeDataNodeServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DataNodeServer will
+// result in compilation errors.
+type UnsafeDataNodeServer interface {
+	mustEmbedUnimplementedDataNodeServer()
+}
+
+func RegisterDataNodeServer(s grpc.ServiceRegistrar, srv DataNodeServer) {
+	s.RegisterService(&DataNode_ServiceDesc, srv)
+}
+
+func _DataNode_RegistrarInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Jugada)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataNodeServer).RegistrarInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.DataNode/RegistrarInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataNodeServer).RegistrarInfo(ctx, req.(*Jugada))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DataNode_PlayerInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataNodeServer).PlayerInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.DataNode/PlayerInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataNodeServer).PlayerInfo(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// DataNode_ServiceDesc is the grpc.ServiceDesc for DataNode service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var DataNode_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "usermsg.DataNode",
+	HandlerType: (*DataNodeServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "RegistrarInfo",
+			Handler:    _DataNode_RegistrarInfo_Handler,
+		},
+		{
+			MethodName: "PlayerInfo",
+			Handler:    _DataNode_PlayerInfo_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "usermsg/usermsg.proto",
 }
