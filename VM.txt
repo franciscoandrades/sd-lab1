@@ -1,15 +1,30 @@
+Proceso: Lider y Data Node 2
 Maquina = dist41
 clave = q~%YbF+9u-A!PC/y
 IP = 10.6.40.181
 
+El Lider escucha en el puerto 50000
+El Data Node 2 escucha en el puerto: 50023
+
+
+Proceso: Jugadores y Data Node 1
 Maquina = dist42
 clave = B7u,!qp/6=<[5rn*
 IP = 10.6.40.182
 
+El Data Node 1 escucha en el puerto: 50023
+
+Proceso: NameNode
 Maquina = dist43
 clave = L8h=z+K3RZGFe%rg
 IP = 10.6.40.183
 
+El Name Node escucha en el puerto: 50020
+
+Proceso: Pozo y Data Node 3
 Maquina = dis44
 clave = vK;bgr>#~4xd,)8j
 IP = 10.6.40.184
+
+El pozo escucha en el puerto:
+El Data Node 3 escucha en el puerto: 50023
