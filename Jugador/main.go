@@ -18,6 +18,20 @@ const (
 	address = "localhost: 50000"
 )
 
+func interfaz() {
+	fmt.Println("-----------------------------------")
+	fmt.Println("BIENVENIDO JUGADOR")
+	fmt.Println("-----------------------------------")
+
+	fmt.Printf("Desea ingresar al juego? [y/n]:  ")
+}
+
+func luzverdeluzroja() {
+	fmt.Println("ETAPA 1: LUZ ROJA, LUZ VERDE")
+	fmt.Println("-----------------------------------")
+	fmt.Println("Reglas del juego: \n Escoja un número del 1 al 10, si es igual o mayor al que elija el Lider será eliminado, tiene 4 turnos para formar que sus números sumen 21")
+}
+
 func main() {
 	fmt.Println("-----------------------------------")
 	fmt.Println("BIENVENIDO JUGADOR")

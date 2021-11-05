@@ -42,9 +42,11 @@ message Req{
 }
 
 message Monto{
-    int32 monto =1; 
+    int32 monto = 1; 
 }
 
+<<<<<<< HEAD
+=======
 
 message Registro{
     string response =1;
@@ -60,6 +62,7 @@ message Data{
     int32 jugada= 3;
 }
 
+>>>>>>> 0a815c1a9083d7314e6f851fedd9f8e06063b024
 service LiderServices {  //con los service definimos los Servicios del Lider
     rpc Play(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User
     rpc Etapa1(Jugada1) returns (Resp){};
