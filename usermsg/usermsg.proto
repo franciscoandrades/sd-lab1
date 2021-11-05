@@ -4,25 +4,28 @@ package usermsg;
 option go_package= "distribuidos/go-usermsg-grpc;go_usermsg_grpc";
 
 message Message {    //con message escribimos una estructura del mensaje "Message"
-    string Name = 1;
+    string play = 1;  //mensaje con el que el jugador acepta seguir jugando
     
 }
 
-message User{     //con message escribimos una estructura del mensaje "Message"
-    string Name = 1;
-    int32 ID =2;
+message User{     
+    int32 ID =1;  //ID del jugador
     
 }
 
-message Jugada_1{    //mensaje enviado por el jugador en luz verde. luz roja
+message Jugada{    
     int32 ID = 1;    //ID jugador
-    int32 n_elegido = 2; //número elegido por el jugador
+    int32 jugada = 2; //número elegido por el jugador
+    int32 ronda =3; // ronda a la que corresponde la jugada
+    int32 etapa = 4; //etapa a la que correponde la jugada
 }
 
-message Resp_1{
-    int32 binario = 1; // 0 si el jugador eligió un número igual o mayor al Lider
-    int32 ronda= 2; //la ronda la cual se está jugando
-    string est_juego = 3; //estado del juego (en caso de que sea el único en sobrevivir y ganar)
+message Resp{
+    int32 survive = 1; // 0 si el jugador murio, 1 si sigue vivo
+    int32 partida =2 ; // 1 si la partida sigue en curso, 0 cc
+    int32 juego = 3; //estado del juego (en caso de que sea el único en sobrevivir y ganar)
+    int32 ronda =4; 
+    int32 etapa =5; 
 }
 
 message Req{
@@ -34,13 +37,6 @@ message Monto{
 }
 
 
-message Jugada{
-    int32 ID =1;
-    string juego=2;
-    string ronda=3;
-    int32 jugada=4;
-}
-
 message Registro{
     string response =1;
 }
@@ -49,10 +45,17 @@ message Check{
     string check =1;
 }
 
+message Data{
+    int32 etapa =1;
+    int32 ronda=2;
+    int32 jugada= 3;
+}
+
 service LiderServices {  //con los service definimos los Servicios del Lider
-    rpc NewPlayer(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User
-    rpc Luz_Roja_Verde(Jugada_1) returns (Resp_1){};
+    rpc Play(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User
+    rpc Juego(Jugada) returns (Resp){};
     rpc Pozo(Req) returns (Monto){};
+    rpc Continue(Message) returns(Check){};
 }
 
 service PozoServices {
@@ -64,4 +67,5 @@ service NameNode{
 }
 service DataNode{
     rpc RegistrarInfo(Jugada) returns(Check){};
+    rpc PlayerInfo(User) returns(Data){};
 }

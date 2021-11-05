@@ -33,7 +33,7 @@ type UserManagementServer struct {
 func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) (*pb.Registro, error) {
 	add := address_1[choose_number()]
 	ip := strings.Trim(add, ":50023")
-	b := []byte("Jugador_" + strconv.Itoa(int(in.GetID())) + " Ronda_" + in.GetRonda() + " " + ip)
+	b := []byte("Jugador_" + strconv.Itoa(int(in.GetID())) + " Ronda_" + strconv.Itoa(int(in.GetRonda())) + " " + ip)
 	err := ioutil.WriteFile("NameNode/Registro.txt", b, 0644)
 	if err != nil {
 		log.Fatalf("Failed to write in Registro.txt")
@@ -44,7 +44,7 @@ func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) 
 	}
 	defer conn.Close()
 	ServiceClient := pb.NewDataNodeClient(conn)
-	_, err = ServiceClient.RegistrarInfo(context.Background(), &pb.Jugada{ID: in.GetID(), Juego: in.GetJuego(), Ronda: in.GetRonda(), Jugada: in.GetJugada()})
+	_, err = ServiceClient.RegistrarInfo(context.Background(), &pb.Jugada{ID: in.GetID(), Etapa: in.GetEtapa(), Jugada: in.GetJugada()})
 
 	return &pb.Registro{Response: ""}, nil
 }

@@ -6,13 +6,11 @@ import (
 	"log"
 	"math/rand"
 	"net"
-	"strconv"
 	"time"
 
 	"google.golang.org/grpc"
 )
 
-var rondas_luz_verde int32 = 0
 var n_etapa1 int32 = 0
 var user_id int32 = 0
 
@@ -31,31 +29,33 @@ type UserManagementServer struct {
 	pb.UnimplementedLiderServicesServer //UnimplementedLiderServices está en el usermsg_grpc.pb, aquí se debe implementar
 }
 
-func (s *UserManagementServer) NewPlayer(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar el método NewPlayer
-	log.Printf("Nombre del Usuario: %v", in.GetName())
+func (s *UserManagementServer) Play(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar el método Play
 	user_id = user_id + 1
-	return &pb.User{Name: in.GetName(), ID: user_id}, nil
+	log.Printf("Jugador %d acepta jugar", user_id)
+	return &pb.User{ID: user_id}, nil
 }
 
-func (s *UserManagementServer) Luz_Roja_Verde(ctx context.Context, in *pb.Jugada_1) (*pb.Resp_1, error) {
+func (s *UserManagementServer) Juego(ctx context.Context, in *pb.Jugada) (*pb.Resp, error) {
 	var bin int32 = 1
-	var n_persona int32 = in.GetNElegido()
+	var jugada int32 = in.GetJugada()
 	choose_number()
-	rondas_luz_verde = rondas_luz_verde + 1
-	log.Printf("El Lider eligió %d y la persona eligio %d", n_etapa1, n_persona)
-	if n_persona >= n_etapa1 {
+
+	log.Printf("El Lider eligió %d y la persona eligio %d", n_etapa1, jugada)
+	if jugada >= n_etapa1 {
 		bin = 0
 	}
+	ronda := in.GetRonda() + 1
+
 	conn, err := grpc.Dial(address_name_node, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}
 	defer conn.Close()
 	ServiceClient := pb.NewNameNodeClient(conn)
-	_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.ID, Juego: "1", Ronda: strconv.Itoa(int(rondas_luz_verde)), Jugada: in.GetNElegido()})
+	_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.GetID(), Jugada: jugada, Ronda: ronda, Etapa: in.GetEtapa()})
 
 	conn.Close()
-	return &pb.Resp_1{Binario: bin, Ronda: rondas_luz_verde, EstJuego: "Se juega"}, nil
+	return &pb.Resp{Survive: bin, Partida: 1, Juego: 1, Ronda: ronda, Etapa: in.GetEtapa()}, nil
 }
 
 func (s *UserManagementServer) Pozo(ctx context.Context, in *pb.Req) (*pb.Monto, error) {
