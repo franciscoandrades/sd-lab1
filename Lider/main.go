@@ -20,9 +20,10 @@ const (
 	address = "localhost: 50011"
 )
 
-func choose_number() {
+func choose_number() int32 {
 	rand.Seed(time.Now().UTC().UnixNano())
-	n_etapa1 = int32(rand.Intn(4) + 6)
+	//n_etapa1 = int32(rand.Intn(4) + 6)
+	return int32(rand.Intn(4) + 6)
 }
 
 type UserManagementServer struct {
@@ -38,7 +39,8 @@ func (s *UserManagementServer) NewPlayer(ctx context.Context, in *pb.Message) (*
 func (s *UserManagementServer) Luz_Roja_Verde(ctx context.Context, in *pb.Jugada_1) (*pb.Resp_1, error) {
 	var bin int32 = 1
 	var n_persona int32 = in.GetNElegido()
-	choose_number()
+	
+	n_etapa1 = choose_number()
 	rondas_luz_verde = rondas_luz_verde + 1
 	log.Printf("El Lider eligió %d y la persona eligio %d", n_etapa1, n_persona)
 	if n_persona >= n_etapa1 {

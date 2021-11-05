@@ -5,13 +5,11 @@ option go_package= "distribuidos/go-usermsg-grpc;go_usermsg_grpc";
 
 message Message {    //con message escribimos una estructura del mensaje "Message"
     string Name = 1;
-    
 }
 
 message User{     //con message escribimos una estructura del mensaje "Message"
     string Name = 1;
     int32 ID =2;
-    
 }
 
 message Jugada_1{    //mensaje enviado por el jugador en luz verde. luz roja
@@ -30,10 +28,8 @@ message Req{
 }
 
 message Monto{
-    int32 monto =1; 
+    int32 monto = 1; 
 }
-
-
 
 service LiderServices {  //con los service definimos los Servicios del Lider
     rpc NewPlayer(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User

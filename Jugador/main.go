@@ -13,6 +13,20 @@ const (
 	address = "localhost: 50000"
 )
 
+func interfaz() {
+	fmt.Println("-----------------------------------")
+	fmt.Println("BIENVENIDO JUGADOR")
+	fmt.Println("-----------------------------------")
+
+	fmt.Printf("Desea ingresar al juego? [y/n]:  ")
+}
+
+func luzverdeluzroja() {
+	fmt.Println("ETAPA 1: LUZ ROJA, LUZ VERDE")
+	fmt.Println("-----------------------------------")
+	fmt.Println("Reglas del juego: \n Escoja un número del 1 al 10, si es igual o mayor al que elija el Lider será eliminado, tiene 4 turnos para formar que sus números sumen 21")
+}
+
 func main() {
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
@@ -21,13 +35,10 @@ func main() {
 	defer conn.Close()
 	ServiceClient := pb.NewLiderServicesClient(conn)
 
-	fmt.Println("-----------------------------------")
-	fmt.Println("BIENVENIDO JUGADOR")
-	fmt.Println("-----------------------------------")
 	var resp string
 	var name string
 	var numero int32 = 0
-	fmt.Printf("Desea ingresar al juego? [y/n]:  ")
+	interfaz()
 	fmt.Scanf("%s \n", &resp)
 	if resp == "y" {
 
@@ -39,9 +50,7 @@ func main() {
 		}
 		var ID1 int32 = r.GetID()
 		fmt.Printf("Su numero de jugador es %d \n", ID1)
-		fmt.Println("ETAPA 1: LUZ ROJA, LUZ VERDE")
-		fmt.Println("-----------------------------------")
-		fmt.Println("Reglas del juego: \n Escoja un número del 1 al 10, si es igual o mayor a que eliga el Lider será eliminado, tiene 4 turnos para formar que sus números sumen 21")
+		luzverdeluzroja()
 
 		ronda := 0
 		for ronda < 4 {
