@@ -23,7 +23,7 @@ func main() {
 	fmt.Println("BIENVENIDO JUGADOR")
 	fmt.Println("-----------------------------------")
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
-	n := 0
+	n := 0 //corresponde a la etapa que jugará
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}
@@ -32,6 +32,7 @@ func main() {
 
 	var resp string
 	var numero int32 = 0
+	var suma int32 = 0
 	fmt.Printf("Desea ingresar al juego? [y/n]:  ")
 	fmt.Scanf("%s \n", &resp)
 	if resp == "y" {
@@ -47,18 +48,37 @@ func main() {
 			fmt.Println(etapas[n])
 			fmt.Println("-----------------------------------")
 			fmt.Println(reglas[n])
-			n++
+			ronda := 0
 			partida := 1
 			for partida == 1 && survive == 1 {
 				fmt.Printf("Ingrese un número: ")
 				fmt.Scanf("%d \n", &numero)
-				r1, err1 := ServiceClient.Juego(context.Background(), &pb.Jugada{ID: ID1, Jugada: numero})
-				survive = int(r1.GetSurvive())
-				if err1 != nil {
-					log.Printf("Error to recive respond")
+				if n == 0 {
+					r1, err1 := ServiceClient.Etapa1(context.Background(), &pb.Jugada1{ID: ID1, Jugada: numero, Ronda: int32(ronda), Etapa: int32(n + 1), Suma: suma})
+					survive = int(r1.GetSurvive())
+					ronda = int(r1.GetRonda())
+					suma = r1.GetSuma()
+					if err1 != nil {
+						log.Printf("Error to recive respond")
+					}
+				}
+				if n == 1 {
+					r1, err1 := ServiceClient.Etapa2(context.Background(), &pb.Jugada{ID: ID1, Jugada: numero})
+					survive = int(r1.GetSurvive())
+					if err1 != nil {
+						log.Printf("Error to recive respond")
+					}
+				}
+				if n == 3 {
+					r1, err1 := ServiceClient.Etapa3(context.Background(), &pb.Jugada{ID: ID1, Jugada: numero})
+					survive = int(r1.GetSurvive())
+					if err1 != nil {
+						log.Printf("Error to recive respond")
+					}
 				}
 
 			}
+			n++
 			fmt.Println("ETAPA TERMINADA")
 			fmt.Println("-----------------------------------")
 			var elec int32 = 0

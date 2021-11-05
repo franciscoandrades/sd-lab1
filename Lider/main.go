@@ -29,17 +29,17 @@ type UserManagementServer struct {
 	pb.UnimplementedLiderServicesServer //UnimplementedLiderServices está en el usermsg_grpc.pb, aquí se debe implementar
 }
 
-func (s *UserManagementServer) Play(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar el método Play
+func (s *UserManagementServer) Play(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar del método Play
 	user_id = user_id + 1
 	log.Printf("Jugador %d acepta jugar", user_id)
 	return &pb.User{ID: user_id}, nil
 }
 
-func (s *UserManagementServer) Juego(ctx context.Context, in *pb.Jugada) (*pb.Resp, error) {
+func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.Resp, error) { //implementacion del método Etapa1
 	var bin int32 = 1
 	var jugada int32 = in.GetJugada()
 	choose_number()
-
+	partida := 1
 	log.Printf("El Lider eligió %d y la persona eligio %d", n_etapa1, jugada)
 	if jugada >= n_etapa1 {
 		bin = 0
@@ -54,8 +54,13 @@ func (s *UserManagementServer) Juego(ctx context.Context, in *pb.Jugada) (*pb.Re
 	ServiceClient := pb.NewNameNodeClient(conn)
 	_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.GetID(), Jugada: jugada, Ronda: ronda, Etapa: in.GetEtapa()})
 
-	conn.Close()
-	return &pb.Resp{Survive: bin, Partida: 1, Juego: 1, Ronda: ronda, Etapa: in.GetEtapa()}, nil
+	if ronda == 4 {
+		if int(in.GetSuma()) < 21 {
+			bin = 0
+		}
+		partida = 0
+	}
+	return &pb.Resp{Survive: bin, Partida: int32(partida), Juego: 1, Ronda: ronda, Etapa: in.GetEtapa(), Suma: in.GetSuma()}, nil
 }
 
 func (s *UserManagementServer) Pozo(ctx context.Context, in *pb.Req) (*pb.Monto, error) {

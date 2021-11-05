@@ -19,7 +19,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LiderServicesClient interface {
 	Play(ctx context.Context, in *Message, opts ...grpc.CallOption) (*User, error)
-	Juego(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error)
+	Etapa1(ctx context.Context, in *Jugada1, opts ...grpc.CallOption) (*Resp, error)
+	Etapa2(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error)
+	Etapa3(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error)
 	Pozo(ctx context.Context, in *Req, opts ...grpc.CallOption) (*Monto, error)
 	Continue(ctx context.Context, in *Message, opts ...grpc.CallOption) (*Check, error)
 }
@@ -41,9 +43,27 @@ func (c *liderServicesClient) Play(ctx context.Context, in *Message, opts ...grp
 	return out, nil
 }
 
-func (c *liderServicesClient) Juego(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error) {
+func (c *liderServicesClient) Etapa1(ctx context.Context, in *Jugada1, opts ...grpc.CallOption) (*Resp, error) {
 	out := new(Resp)
-	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Juego", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Etapa1", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *liderServicesClient) Etapa2(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Etapa2", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *liderServicesClient) Etapa3(ctx context.Context, in *Jugada, opts ...grpc.CallOption) (*Resp, error) {
+	out := new(Resp)
+	err := c.cc.Invoke(ctx, "/usermsg.LiderServices/Etapa3", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +93,9 @@ func (c *liderServicesClient) Continue(ctx context.Context, in *Message, opts ..
 // for forward compatibility
 type LiderServicesServer interface {
 	Play(context.Context, *Message) (*User, error)
-	Juego(context.Context, *Jugada) (*Resp, error)
+	Etapa1(context.Context, *Jugada1) (*Resp, error)
+	Etapa2(context.Context, *Jugada) (*Resp, error)
+	Etapa3(context.Context, *Jugada) (*Resp, error)
 	Pozo(context.Context, *Req) (*Monto, error)
 	Continue(context.Context, *Message) (*Check, error)
 	mustEmbedUnimplementedLiderServicesServer()
@@ -86,8 +108,14 @@ type UnimplementedLiderServicesServer struct {
 func (UnimplementedLiderServicesServer) Play(context.Context, *Message) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Play not implemented")
 }
-func (UnimplementedLiderServicesServer) Juego(context.Context, *Jugada) (*Resp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Juego not implemented")
+func (UnimplementedLiderServicesServer) Etapa1(context.Context, *Jugada1) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Etapa1 not implemented")
+}
+func (UnimplementedLiderServicesServer) Etapa2(context.Context, *Jugada) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Etapa2 not implemented")
+}
+func (UnimplementedLiderServicesServer) Etapa3(context.Context, *Jugada) (*Resp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Etapa3 not implemented")
 }
 func (UnimplementedLiderServicesServer) Pozo(context.Context, *Req) (*Monto, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Pozo not implemented")
@@ -126,20 +154,56 @@ func _LiderServices_Play_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _LiderServices_Juego_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _LiderServices_Etapa1_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Jugada1)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LiderServicesServer).Etapa1(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.LiderServices/Etapa1",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LiderServicesServer).Etapa1(ctx, req.(*Jugada1))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LiderServices_Etapa2_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Jugada)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LiderServicesServer).Juego(ctx, in)
+		return srv.(LiderServicesServer).Etapa2(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/usermsg.LiderServices/Juego",
+		FullMethod: "/usermsg.LiderServices/Etapa2",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LiderServicesServer).Juego(ctx, req.(*Jugada))
+		return srv.(LiderServicesServer).Etapa2(ctx, req.(*Jugada))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LiderServices_Etapa3_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Jugada)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LiderServicesServer).Etapa3(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/usermsg.LiderServices/Etapa3",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LiderServicesServer).Etapa3(ctx, req.(*Jugada))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -192,8 +256,16 @@ var LiderServices_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LiderServices_Play_Handler,
 		},
 		{
-			MethodName: "Juego",
-			Handler:    _LiderServices_Juego_Handler,
+			MethodName: "Etapa1",
+			Handler:    _LiderServices_Etapa1_Handler,
+		},
+		{
+			MethodName: "Etapa2",
+			Handler:    _LiderServices_Etapa2_Handler,
+		},
+		{
+			MethodName: "Etapa3",
+			Handler:    _LiderServices_Etapa3_Handler,
 		},
 		{
 			MethodName: "Pozo",
