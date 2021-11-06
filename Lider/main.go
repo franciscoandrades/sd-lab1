@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	pb "distribuidos/go-usermsg-grpc/usermsg"
+	"fmt"
 	"log"
 	"math/rand"
 	"net"
@@ -13,14 +14,27 @@ import (
 
 var n_etapa1 int32 = 0
 var user_id int32 = 0
+var cont = 0
 
 const (
-	port         = ":50000"
-	address_pozo = "10.6.40.184:50011"
-	//address_pozo = "localhost:50011"
-	address_name_node = "10.6.40.183:50020"
-	//address_name_node = "localhost:50020"
+	port = ":50000"
+	//address_pozo = "10.6.40.184:50011"
+	address_pozo = "localhost:50011"
+	//address_name_node = "10.6.40.183:50020"
+	address_name_node = "localhost:50020"
 )
+
+type InfoJugadores struct {
+	ID         int32
+	equipo     int
+	ID_rival   int32
+	alive      int
+	ult_jugada int32
+	ronda_et1  int
+	suma       int32
+}
+
+var Jugadores [16]InfoJugadores
 
 func choose_number() {
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -32,38 +46,69 @@ type UserManagementServer struct {
 	pb.UnimplementedLiderServicesServer //UnimplementedLiderServices está en el usermsg_grpc.pb, aquí se debe implementar
 }
 
+func PlayersAlive() (alive int) {
+	for i := 0; i < 16; i++ {
+		if Jugadores[i].alive == 1 {
+			alive++
+		}
+	}
+	return alive
+}
+
 func (s *UserManagementServer) Play(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar del método Play
 	user_id = user_id + 1
 	log.Printf("Jugador %d acepta jugar", user_id)
+	Jugador := InfoJugadores{
+		ID:         user_id,
+		equipo:     0,
+		ID_rival:   0,
+		alive:      1,
+		ult_jugada: 0,
+		ronda_et1:  0,
+		suma:       0,
+	}
+	Jugadores[user_id-1] = Jugador
 	return &pb.User{ID: user_id}, nil
 }
 
 func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.Resp, error) { //implementacion del método Etapa1
 	var bin int32 = 1
+	if PlayersAlive() == 1 {
+		fmt.Printf("El Jugador %d ha ganado el Juego del CALAMAR \n", in.GetID())
+		return &pb.Resp{Survive: bin, Partida: int32(0), Juego: 0, Etapa: in.GetEtapa()}, nil
+	}
 	var jugada int32 = in.GetJugada()
 	choose_number()
 	partida := 1
-	log.Printf("El Lider eligió %d y la persona eligio %d", n_etapa1, jugada)
+	fmt.Printf("El Lider eligió %d y el jugador %d eligió %d \n", n_etapa1, in.GetID(), jugada)
 	if jugada >= n_etapa1 {
 		bin = 0
-	}
-	ronda := in.GetRonda() + 1
+		Jugadores[in.GetID()-1].alive = 0
+		fmt.Printf("El Jugador %d ha muerto \n", in.GetID())
 
-	conn, err := grpc.Dial(address_name_node, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		log.Fatalf("Did not connect: %v", err)
 	}
-	defer conn.Close()
-	ServiceClient := pb.NewNameNodeClient(conn)
-	_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.GetID(), Jugada: jugada, Ronda: ronda, Etapa: in.GetEtapa()})
+	fmt.Printf("----------------------------------------------------------------------------- \n")
+	ronda := Jugadores[in.GetID()-1].ronda_et1 + 1
+	Jugadores[in.GetID()-1].ronda_et1 = ronda
+	Jugadores[in.GetID()-1].suma += jugada
+	//conn, err := grpc.Dial(address_name_node, grpc.WithInsecure(), grpc.WithBlock())
+	//f err != nil {
+	//	log.Fatalf("Did not connect: %v", err)
+	//}
+	//defer conn.Close()
+	//ServiceClient := pb.NewNameNodeClient(conn)
+	//_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.GetID(), Jugada: jugada, Ronda: int32(ronda), Etapa: in.GetEtapa()})
 
 	if ronda == 4 {
-		if int(in.GetSuma()) < 21 {
+		if Jugadores[in.GetID()-1].suma < 21 {
 			bin = 0
+			Jugadores[in.GetID()-1].alive = 0
+			fmt.Printf("El Jugador %d ha muerto por no sumar 21 en 4 rondas \n", in.GetID())
+			fmt.Printf("----------------------------------------------------------------------------- \n")
 		}
 		partida = 0
 	}
-	return &pb.Resp{Survive: bin, Partida: int32(partida), Juego: 1, Ronda: ronda, Etapa: in.GetEtapa(), Suma: in.GetSuma()}, nil
+	return &pb.Resp{Survive: bin, Partida: int32(partida), Juego: 1, Ronda: int32(ronda), Etapa: in.GetEtapa()}, nil
 }
 
 func (s *UserManagementServer) Pozo(ctx context.Context, in *pb.Req) (*pb.Monto, error) {

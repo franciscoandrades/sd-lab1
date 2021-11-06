@@ -16,15 +16,14 @@ message User{
 message Jugada1{    
     int32 ID = 1;    //ID jugador
     int32 jugada = 2; //número elegido por el jugador
-    int32 ronda =3; // ronda a la que corresponde la jugada
-    int32 etapa = 4; //etapa a la que correponde la jugada
-    int32 suma = 5; //suma de las jugadas hasta el momento
+    int32 etapa = 3; //etapa a la que correponde la jugada
+
 }
 
 message Jugada{    
     int32 ID = 1;    //ID jugador
     int32 jugada = 2; //número elegido por el jugador
-    int32 ronda =3; // ronda a la que corresponde la jugada
+    int32 ronda =3;
     int32 etapa = 4; //etapa a la que correponde la jugada
 }
 
@@ -34,7 +33,6 @@ message Resp{
     int32 juego = 3; //1 hay más de un jugador en competencia, 0 es el único jugador restante
     int32 ronda =4; 
     int32 etapa =5; 
-    int32 suma =6;
 }
 
 message Req{
@@ -45,8 +43,6 @@ message Monto{
     int32 monto = 1; 
 }
 
-<<<<<<< HEAD
-=======
 
 message Registro{
     string response =1;
@@ -62,7 +58,6 @@ message Data{
     int32 jugada= 3;
 }
 
->>>>>>> 0a815c1a9083d7314e6f851fedd9f8e06063b024
 service LiderServices {  //con los service definimos los Servicios del Lider
     rpc Play(Message) returns (User) {};   // en este caso tenemos un método NewPlayer que rebide un Message y retorna un User
     rpc Etapa1(Jugada1) returns (Resp){};

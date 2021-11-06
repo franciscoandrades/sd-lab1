@@ -5,6 +5,8 @@ import (
 	pb "distribuidos/go-usermsg-grpc/usermsg"
 	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -15,9 +17,19 @@ var reglas = []string{"Reglas del juego: \n Escoja un número entre el 1 y el 10
 	"Reglas del juego: \n Escoja un número entre el 1 y el 10, si su valor es el más \ncercano al número elegido por el lider (se considerará el valor absoluto) gana, en caso contrario gana su rival."}
 
 const (
-	address = "10.6.40.181:50000"
-	//address = "localhost:50000"
+	//address = "10.6.40.181:50000"
+	address = "localhost:50000"
 )
+
+type Bot struct {
+	ID      int32
+	jugada  int32
+	survive int
+}
+
+const cant_bots = 16
+
+var Jugadores [cant_bots]Bot
 
 func interfaz() {
 	fmt.Println("-----------------------------------")
@@ -44,78 +56,99 @@ func main() {
 	}
 	defer conn.Close()
 	ServiceClient := pb.NewLiderServicesClient(conn)
-
+	var jugada int32
 	var resp string
-	var numero int32 = 0
-	var suma int32 = 0
 	fmt.Printf("Desea ingresar al juego? [y/n]:  ")
 	fmt.Scanf("%s \n", &resp)
 	if resp == "y" {
-		r, err := ServiceClient.Play(context.Background(), &pb.Message{Play: resp})
-		survive := 1
-		est_juego := 0
-		for survive == 1 || est_juego != 0 {
+
+		for i := 0; i < cant_bots; i++ {
+			r, err := ServiceClient.Play(context.Background(), &pb.Message{Play: "y"})
 			if err != nil {
 				log.Printf("Error to recive respond")
 			}
-			var ID1 int32 = r.GetID()
-			fmt.Printf("Su numero de jugador es %d \n", ID1)
-			fmt.Println(etapas[n])
-			fmt.Println("-----------------------------------")
-			fmt.Println(reglas[n])
-			ronda := 0
-			partida := 1
-			for partida == 1 && survive == 1 {
-				fmt.Printf("Ingrese un número: ")
-				fmt.Scanf("%d \n", &numero)
-				if n == 0 {
-					r1, err1 := ServiceClient.Etapa1(context.Background(), &pb.Jugada1{ID: ID1, Jugada: numero, Ronda: int32(ronda), Etapa: int32(n + 1), Suma: suma})
-					survive = int(r1.GetSurvive())
-					ronda = int(r1.GetRonda())
-					suma = r1.GetSuma()
-					if err1 != nil {
-						log.Printf("Error to recive respond")
-					}
-				}
-				if n == 1 {
-					r1, err1 := ServiceClient.Etapa2(context.Background(), &pb.Jugada{ID: ID1, Jugada: numero})
-					survive = int(r1.GetSurvive())
-					if err1 != nil {
-						log.Printf("Error to recive respond")
-					}
-				}
-				if n == 3 {
-					r1, err1 := ServiceClient.Etapa3(context.Background(), &pb.Jugada{ID: ID1, Jugada: numero})
-					survive = int(r1.GetSurvive())
-					if err1 != nil {
-						log.Printf("Error to recive respond")
-					}
-				}
+			Bot := Bot{
+				ID:      r.GetID(),
+				jugada:  int32(0),
+				survive: 1,
+			}
 
+			Jugadores[i] = Bot
+
+		}
+		for n < 3 {
+			fmt.Println(etapas[n])
+			fmt.Println(reglas[n])
+			var partida = 1
+			var juego = 1
+			for partida == 1 {
+				for i := 0; i < 16; i++ {
+					if Jugadores[i].survive == 1 {
+						var ID = Jugadores[i].ID
+						if ID == 16 {
+							fmt.Printf("Ingrese elección: ")
+							fmt.Scanf("%d \n", &jugada)
+						} else {
+							rand.Seed(time.Now().UTC().UnixNano())
+							jugada = int32(rand.Intn(7) + 1)
+						}
+						if n == 0 {
+							//fmt.Printf("El jugador %d jugó %d \n", ID, jugada)
+							r, err := ServiceClient.Etapa1(context.Background(), &pb.Jugada1{ID: ID, Jugada: jugada, Etapa: int32(n + 1)})
+							if err != nil {
+								log.Fatal("Error to recive response")
+							}
+							Jugadores[i].survive = int(r.GetSurvive())
+							partida = int(r.GetPartida())
+							juego = int(r.GetJuego())
+							if juego == 0 {
+								return
+							}
+						}
+						if n == 1 {
+							//fmt.Printf("El jugador %d jugó %d \n", ID, jugada)
+							r, err := ServiceClient.Etapa2(context.Background(), &pb.Jugada{ID: ID, Jugada: jugada, Etapa: int32(n + 1)})
+							if err != nil {
+								log.Fatal("Error to recive response")
+							}
+							Jugadores[i].survive = int(r.GetSurvive())
+							partida = int(r.GetPartida())
+							juego = int(r.GetJuego())
+							if juego == 0 {
+								return
+							}
+						}
+						if n == 2 {
+							//fmt.Printf("El jugador %d jugó %d \n", ID, jugada)
+							r, err := ServiceClient.Etapa3(context.Background(), &pb.Jugada{ID: ID, Jugada: jugada, Etapa: int32(n + 1)})
+							if err != nil {
+								log.Fatal("Error to recive response")
+							}
+							Jugadores[i].survive = int(r.GetSurvive())
+							partida = int(r.GetPartida())
+							juego = int(r.GetJuego())
+							if juego == 0 {
+								return
+							}
+						}
+					}
+
+				}
+				var option = 1
+				for option == 1 {
+					fmt.Println("1.Ver monto del pozo")
+					fmt.Println("2.Avanzar a la siguiente ronda")
+					fmt.Scanf("%d", &option)
+					if option == 1 {
+						r, err := ServiceClient.Pozo(context.Background(), &pb.Req{Req: "Hi"})
+						if err != nil {
+							log.Fatal("Error to recive response Pozo")
+						}
+						fmt.Printf("El monto del pozo es %d \n", r.GetMonto())
+					}
+				}
 			}
 			n++
-			fmt.Println("ETAPA TERMINADA")
-			fmt.Println("-----------------------------------")
-			var elec int32 = 0
-			for int(elec) != 2 {
-				fmt.Println("1. Ver el monto acumulado en el pozo \n2. Avanzar a la siguiente etapa")
-				fmt.Scanf("%d", &elec)
-				fmt.Printf("Elec es %d \n", elec)
-				if int(elec) == 1 {
-					r2, err2 := ServiceClient.Pozo(context.Background(), &pb.Req{Req: "POZO"})
-					if err2 != nil {
-						log.Println("Error to recive respond")
-
-					}
-					fmt.Printf("El pozo actual es de: %d \n", r2.GetMonto())
-				}
-			}
-			_, err2 := ServiceClient.Continue(context.Background(), &pb.Message{Play: "READY"})
-			if err2 != nil {
-				log.Println("Error to recive respond")
-
-			}
-
 		}
 	}
 }

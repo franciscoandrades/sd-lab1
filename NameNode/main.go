@@ -33,12 +33,12 @@ type UserManagementServer struct {
 func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) (*pb.Registro, error) {
 	add := address_1[choose_number()]
 	ip := strings.Trim(add, ":50023")
-	b := []byte("Jugador_" + strconv.Itoa(int(in.GetID())) + " Ronda_" + strconv.Itoa(int(in.GetRonda())) + " " + ip)
+	b := []byte("Jugador_" + strconv.Itoa(int(in.GetID())) + " Ronda_" + strconv.Itoa(int(in.GetRonda())) + " " + ip + "\n")
 	err := ioutil.WriteFile("NameNode/Registro.txt", b, 0644)
 	if err != nil {
 		log.Fatalf("Failed to write in Registro.txt")
 	}
-	conn, err := grpc.Dial(add, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial("localhost:50023", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}
