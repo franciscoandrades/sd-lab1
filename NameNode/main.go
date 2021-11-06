@@ -17,7 +17,7 @@ import (
 var address_1 = []string{"10.6.40.182:50023", "10.6.40.181:50023", "10.6.40.184:50023"}
 
 const (
-	port = ":50020"
+	port = "10.6.40.181: 50020"
 )
 
 func choose_number() int32 {
@@ -38,7 +38,7 @@ func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) 
 	if err != nil {
 		log.Fatalf("Failed to write in Registro.txt")
 	}
-	conn, err := grpc.Dial("0.0.0.0:50023", grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial("10.6.40.181:50023", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}

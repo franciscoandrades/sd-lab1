@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	port = ":50023"
+	port = "10.6.40.181: 50023"
 )
 
 type UserManagementServer struct {
