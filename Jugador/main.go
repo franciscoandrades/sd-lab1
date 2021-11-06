@@ -90,7 +90,7 @@ func main() {
 							fmt.Scanf("%d \n", &jugada)
 						} else {
 							rand.Seed(time.Now().UTC().UnixNano())
-							jugada = int32(rand.Intn(7) + 1)
+							jugada = int32(rand.Intn(9) + 1)
 						}
 						if n == 0 {
 							//fmt.Printf("El jugador %d jugó %d \n", ID, jugada)
