@@ -15,7 +15,7 @@ var n_etapa1 int32 = 0
 var user_id int32 = 0
 
 const (
-	port              = "50000"
+	port              = "0.0.0.0:50000"
 	address_pozo      = "0.0.0.0: 50011"
 	address_name_node = "0.0.0.0: 50020"
 )
