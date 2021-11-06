@@ -7,8 +7,10 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"strconv"
 	"time"
 
+	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 )
 
@@ -20,6 +22,8 @@ const (
 	port         = ":50000"
 	address_pozo = "10.6.40.184:50011"
 	//address_pozo = "localhost:50011"
+	address_pozo2 = "10.6.40.184:50012"
+	//address_pozo2 = "localhost:50012"
 	address_name_node = "10.6.40.183:50020"
 	//address_name_node = "localhost:50020"
 )
@@ -55,6 +59,45 @@ func PlayersAlive() (alive int) {
 	return alive
 }
 
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
+
+func mandar_pozo(id_jugador int, etapa int) {
+	conn, err := amqp.Dial("amqp://guest:guest@10.6.40.184:50012/")
+	failOnError(err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open a channel")
+	defer ch.Close()
+
+	q, err := ch.QueueDeclare(
+		"hello", // name
+		false,   // durable
+		false,   // delete when unused
+		false,   // exclusive
+		false,   // no-wait
+		nil,     // arguments
+	)
+	failOnError(err, "Failed to declare a queue")
+
+	body := "Jugador_" + strconv.Itoa(id_jugador) + " Ronda_" + strconv.Itoa(etapa)
+
+	err = ch.Publish(
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		})
+	failOnError(err, "Failed to publish a message")
+}
+
 func (s *UserManagementServer) Play(ctx context.Context, in *pb.Message) (*pb.User, error) { //implementar del método Play
 	user_id = user_id + 1
 	log.Printf("Jugador %d acepta jugar", user_id)
@@ -85,6 +128,8 @@ func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.
 		bin = 0
 		Jugadores[in.GetID()-1].alive = 0
 		fmt.Printf("El Jugador %d ha muerto \n", in.GetID())
+		// mandar jugador al pozo
+		mandar_pozo(int(in.GetID()), int(in.GetEtapa()))
 
 	}
 	fmt.Printf("----------------------------------------------------------------------------- \n")
@@ -105,6 +150,7 @@ func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.
 			Jugadores[in.GetID()-1].alive = 0
 			fmt.Printf("El Jugador %d ha muerto por no sumar 21 en 4 rondas \n", in.GetID())
 			fmt.Printf("----------------------------------------------------------------------------- \n")
+			//mandar jugador al pozo
 		}
 		partida = 0
 	}
