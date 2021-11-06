@@ -17,11 +17,11 @@ var user_id int32 = 0
 var cont = 0
 
 const (
-	port = ":50000"
-	//address_pozo = "10.6.40.184:50011"
-	address_pozo = "localhost:50011"
-	//address_name_node = "10.6.40.183:50020"
-	address_name_node = "localhost:50020"
+	port         = ":50000"
+	address_pozo = "10.6.40.184:50011"
+	//address_pozo = "localhost:50011"
+	address_name_node = "10.6.40.183:50020"
+	//address_name_node = "localhost:50020"
 )
 
 type InfoJugadores struct {
@@ -91,13 +91,13 @@ func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.
 	ronda := Jugadores[in.GetID()-1].ronda_et1 + 1
 	Jugadores[in.GetID()-1].ronda_et1 = ronda
 	Jugadores[in.GetID()-1].suma += jugada
-	//conn, err := grpc.Dial(address_name_node, grpc.WithInsecure(), grpc.WithBlock())
-	//f err != nil {
-	//	log.Fatalf("Did not connect: %v", err)
-	//}
-	//defer conn.Close()
-	//ServiceClient := pb.NewNameNodeClient(conn)
-	//_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.GetID(), Jugada: jugada, Ronda: int32(ronda), Etapa: in.GetEtapa()})
+	conn, err := grpc.Dial(address_name_node, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("Did not connect: %v", err)
+	}
+	defer conn.Close()
+	ServiceClient := pb.NewNameNodeClient(conn)
+	_, err = ServiceClient.JugadaPlayer(context.Background(), &pb.Jugada{ID: in.GetID(), Jugada: jugada, Ronda: int32(ronda), Etapa: in.GetEtapa()})
 
 	if ronda == 4 {
 		if Jugadores[in.GetID()-1].suma < 21 {
