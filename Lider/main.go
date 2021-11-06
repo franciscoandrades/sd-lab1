@@ -16,8 +16,8 @@ var user_id int32 = 0
 
 const (
 	port              = ":50000"
-	address_pozo      = "localhost: 50011"
-	address_name_node = "localhost: 50020"
+	address_pozo      = "0.0.0.0: 50011"
+	address_name_node = "0.0.0.0: 50020"
 )
 
 func choose_number() {

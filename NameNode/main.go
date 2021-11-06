@@ -38,7 +38,7 @@ func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) 
 	if err != nil {
 		log.Fatalf("Failed to write in Registro.txt")
 	}
-	conn, err := grpc.Dial("localhost:50023", grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial("0.0.0.0:50023", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
 	}

@@ -15,7 +15,7 @@ var reglas = []string{"Reglas del juego: \n Escoja un número entre el 1 y el 10
 	"Reglas del juego: \n Escoja un número entre el 1 y el 10, si su valor es el más \ncercano al número elegido por el lider (se considerará el valor absoluto) gana, en caso contrario gana su rival."}
 
 const (
-	address = "localhost: 50000"
+	address = "0.0.0.0: 50000"
 )
 
 func interfaz() {
