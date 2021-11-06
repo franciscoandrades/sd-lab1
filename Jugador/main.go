@@ -15,7 +15,7 @@ var reglas = []string{"Reglas del juego: \n Escoja un número entre el 1 y el 10
 	"Reglas del juego: \n Escoja un número entre el 1 y el 10, si su valor es el más \ncercano al número elegido por el lider (se considerará el valor absoluto) gana, en caso contrario gana su rival."}
 
 const (
-	address = "0.0.0.0: 50000"
+	address = "10.6.40.181: 50000"
 )
 
 func interfaz() {
@@ -36,7 +36,9 @@ func main() {
 	fmt.Println("-----------------------------------")
 	fmt.Println("BIENVENIDO JUGADOR")
 	fmt.Println("-----------------------------------")
+	log.Printf("address")
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+	log.Printf("pase")
 	n := 0 //corresponde a la etapa que jugará
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
