@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
+	"os"
 	"google.golang.org/grpc"
 )
 
@@ -33,11 +33,20 @@ type UserManagementServer struct {
 func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) (*pb.Registro, error) {
 	add := address_1[choose_number()]
 	ip := strings.Trim(add, ":50023")
-	b := []byte("Jugador_" + strconv.Itoa(int(in.GetID())) + " Ronda_" + strconv.Itoa(int(in.GetRonda())) + " " + ip)
-	err := ioutil.WriteFile("NameNode/Registro.txt", b, 0644)
-	if err != nil {
-		log.Fatalf("Failed to write in Registro.txt")
-	}
+	b := []byte("Jugador_" + strconv.Itoa(int(in.GetID())) + " Ronda_" + strconv.Itoa(int(in.GetRonda())) + " " + ip + "\n")
+	//err := ioutil.WriteFile("NameNode/Registro.txt", b, 0644)
+	//if err != nil {
+	//	log.Fatalf("Failed to write in Registro.txt")
+	//}
+	f, err3 := os.OpenFile("Registro.txt", os.O_APPEND|os.O_WRONLY, 0600)
+    if err3 != nil {
+        panic(err3)
+    }
+	_, err3 = f.WriteString(string(b))
+    if err3 != nil {
+        log.Fatal(err3)
+    }
+
 	conn, err := grpc.Dial(add, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("Did not connect: %v", err)
@@ -50,6 +59,11 @@ func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) 
 }
 
 func main() {
+	err := ioutil.WriteFile("NameNode/Registro.txt", []byte(""), 0644)
+	if err != nil {
+		log.Fatalf("Failed to write in Registro.txt")
+	}
+	
 	listner, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
