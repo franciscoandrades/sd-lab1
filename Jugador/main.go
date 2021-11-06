@@ -36,7 +36,7 @@ func main() {
 	fmt.Println("-----------------------------------")
 	fmt.Println("BIENVENIDO JUGADOR")
 	fmt.Println("-----------------------------------")
-	log.Printf("address")
+	log.Printf(address)
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 	log.Printf("pase")
 	n := 0 //corresponde a la etapa que jugará
