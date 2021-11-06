@@ -15,9 +15,11 @@ var n_etapa1 int32 = 0
 var user_id int32 = 0
 
 const (
-	port              = ":50000"
-	address_pozo      = "localhost: 50011"
-	address_name_node = "localhost: 50020"
+	port         = ":50000"
+	address_pozo = "10.6.40.184:50011"
+	//address_pozo = "localhost:50011"
+	address_name_node = "10.6.40.183:50020"
+	//address_name_node = "localhost:50020"
 )
 
 func choose_number() {

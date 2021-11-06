@@ -26,5 +26,5 @@ Maquina = dis44
 clave = vK;bgr>#~4xd,)8j
 IP = 10.6.40.184
 
-El pozo escucha en el puerto:
+El pozo escucha en el puerto: 50011
 El Data Node 3 escucha en el puerto: 50023

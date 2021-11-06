@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	port = ": 50011"
+	port = ":50011"
 )
 
 var pozo = 30000
