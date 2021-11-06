@@ -38,7 +38,7 @@ func (s *UserManagementServer) JugadaPlayer(ctx context.Context, in *pb.Jugada) 
 	//if err != nil {
 	//	log.Fatalf("Failed to write in Registro.txt")
 	//}
-	f, err3 := os.OpenFile("Registro.txt", os.O_APPEND|os.O_WRONLY, 0600)
+	f, err3 := os.OpenFile("NameNode/Registro.txt", os.O_APPEND|os.O_WRONLY, 0600)
     if err3 != nil {
         panic(err3)
     }
@@ -63,7 +63,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to write in Registro.txt")
 	}
-	
+
 	listner, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
