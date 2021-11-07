@@ -66,7 +66,7 @@ func failOnError(err error, msg string) {
 }
 
 func mandar_pozo(id_jugador int, etapa int) {
-	conn, err := amqp.Dial("amqp://guest:guest@10.6.40.184:5672/")
+	conn, err := amqp.Dial("amqp://admin:admin@10.6.40.184:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
