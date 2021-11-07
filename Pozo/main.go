@@ -51,9 +51,8 @@ func (s *UserManagementServer) MontoPozo(ctx context.Context, in *pb.Req) (*pb.M
 }
 
 func main() {
-	//b:= []byte("Jugador_1 Ronda_1 40000")
-	//err := ioutil.WriteFile("pozo.txt", b, 0644)
-	/*listner, err := net.Listen("tcp", port)
+	err := ioutil.WriteFile("pozo.txt", []byte(""), 0644)
+	listner, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -64,7 +63,7 @@ func main() {
 
 	if err = grpcServer.Serve(listner); err != nil {
 		log.Fatalf("Failed to listen on port 50011: %v", err)
-	}*/
+	}
 
 	go func() {
 		listner, err := net.Listen("tcp", port)
@@ -115,8 +114,13 @@ func main() {
 		for d := range msgs {
 			var pozo = int(leer_pozo())
 			var body = string(d.Body) + " " + strconv.Itoa(pozo)
-			log.Printf("Se recibe... %s", body)
+			cont, _ := ioutil.ReadFile("Pozo/pozo.txt")
+			cont = append(cont, []byte(body)...)
+			err := ioutil.WriteFile("Pozo/pozo.txt", cont, 0644)
+			if err != nil {
+				log.Fatalf("Failed to write in Registro.txt")
 
+			}
 		}
 
 	}()
