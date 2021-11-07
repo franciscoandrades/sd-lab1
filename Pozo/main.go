@@ -52,18 +52,6 @@ func (s *UserManagementServer) MontoPozo(ctx context.Context, in *pb.Req) (*pb.M
 
 func main() {
 	err := ioutil.WriteFile("pozo.txt", []byte(""), 0644)
-	listner, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
-
-	grpcServer := grpc.NewServer()
-	pb.RegisterPozoServicesServer(grpcServer, &UserManagementServer{})
-	log.Printf("server listening at %v", listner.Addr())
-
-	if err = grpcServer.Serve(listner); err != nil {
-		log.Fatalf("Failed to listen on port 50011: %v", err)
-	}
 
 	go func() {
 		listner, err := net.Listen("tcp", port)
