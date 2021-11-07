@@ -18,7 +18,7 @@ const (
 	port = ":50011"
 )
 
-var pozo = 30000
+var pozo = 0
 
 func failOnError(err error, msg string) {
 	if err != nil {
@@ -51,7 +51,7 @@ func (s *UserManagementServer) MontoPozo(ctx context.Context, in *pb.Req) (*pb.M
 }
 
 func main() {
-	err := ioutil.WriteFile("pozo.txt", []byte(""), 0644)
+	err := ioutil.WriteFile("pozo.txt", []byte("0"), 0644)
 	listner, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
@@ -112,7 +112,7 @@ func main() {
 	go_to := make(chan bool)
 	go func() {
 		for d := range msgs {
-			var pozo = int(leer_pozo())
+			var pozo = int(leer_pozo()) + 100000000
 			var body = string(d.Body) + " " + strconv.Itoa(pozo)
 			cont, _ := ioutil.ReadFile("Pozo/pozo.txt")
 			cont = append(cont, []byte(body)...)
