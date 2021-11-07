@@ -11,5 +11,5 @@ namenode:
     go run NameNode/main.go
 
 datanode:
-go run DataNode/main.go
+    go run DataNode/main.go
 
