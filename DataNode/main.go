@@ -36,8 +36,11 @@ func suma(id int, etapa int) (suma int) {
 }
 
 func (s *UserManagementServer) RegistrarInfo(ctx context.Context, in *pb.Jugada) (*pb.Check, error) {
+	log.Printf("Llegó una Jugada del Jugador %d \n", in.GetID())
 	b := []byte(strconv.Itoa(int(in.GetJugada())) + "\n")
-	err := ioutil.WriteFile("DataNode/Jugador_"+strconv.Itoa(int(in.GetID()))+"__Etapa_"+strconv.Itoa(int(in.GetEtapa()))+".txt", b, 0644)
+	cont, _ := ioutil.ReadFile("DataNode/Jugador_" + strconv.Itoa(int(in.GetID())) + "__Etapa_" + strconv.Itoa(int(in.GetEtapa())) + ".txt")
+	cont = append(cont, b...)
+	err := ioutil.WriteFile("DataNode/Jugador_"+strconv.Itoa(int(in.GetID()))+"__Etapa_"+strconv.Itoa(int(in.GetEtapa()))+".txt", cont, 0644)
 	if err != nil {
 		log.Fatalf("Failed to write in Registro.txt")
 	}
