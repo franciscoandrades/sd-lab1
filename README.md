@@ -2,9 +2,9 @@
 # Squid Game
 
 ----- Integrantes ----
-Nicolás Puente
-Francisco Andrades
-Lucas Díaz Aravena
+* Nicolás Puente
+* Francisco Andrades
+* Lucas Díaz Aravena
 ----------------------
 
 # Información
