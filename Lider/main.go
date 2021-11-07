@@ -129,7 +129,7 @@ func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.
 		Jugadores[in.GetID()-1].alive = 0
 		fmt.Printf("El Jugador %d ha muerto \n", in.GetID())
 		// mandar jugador al pozo
-		//mandar_pozo(int(in.GetID()), int(in.GetEtapa()))
+		mandar_pozo(int(in.GetID()), int(in.GetEtapa()))
 
 	}
 	fmt.Printf("----------------------------------------------------------------------------- \n")
@@ -151,6 +151,7 @@ func (s *UserManagementServer) Etapa1(ctx context.Context, in *pb.Jugada1) (*pb.
 			fmt.Printf("El Jugador %d ha muerto por no sumar 21 en 4 rondas \n", in.GetID())
 			fmt.Printf("----------------------------------------------------------------------------- \n")
 			//mandar jugador al pozo
+			mandar_pozo(int(in.GetID()), int(in.GetEtapa()))
 		}
 		partida = 0
 	}

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 )
 
@@ -52,7 +53,7 @@ func (s *UserManagementServer) MontoPozo(ctx context.Context, in *pb.Req) (*pb.M
 func main() {
 	//b:= []byte("Jugador_1 Ronda_1 40000")
 	//err := ioutil.WriteFile("pozo.txt", b, 0644)
-	listner, err := net.Listen("tcp", port)
+	/*listner, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
@@ -63,9 +64,9 @@ func main() {
 
 	if err = grpcServer.Serve(listner); err != nil {
 		log.Fatalf("Failed to listen on port 50011: %v", err)
-	}
+	}*/
 
-	/*go func() {
+	go func() {
 		listner, err := net.Listen("tcp", port)
 		if err != nil {
 			log.Fatalf("Failed to listen: %v", err)
@@ -78,9 +79,9 @@ func main() {
 		if err = grpcServer.Serve(listner); err != nil {
 			log.Fatalf("Failed to listen on port 50011: %v", err)
 		}
-	}()*/
+	}()
 
-	/*conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -120,5 +121,5 @@ func main() {
 
 	}()
 	log.Printf(" [*] Pozo recibiendo mensajes en puerto 5672")
-	<-go_to*/
+	<-go_to
 }
