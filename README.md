@@ -2,9 +2,9 @@
 # Squid Game
 
 ----- Integrantes ----
-* Nicolás Puente
-* Francisco Andrades
-* Lucas Díaz Aravena
+* Nicolás Puente 201873618-K
+* Francisco Andrades 201673584-4
+* Lucas Díaz Aravena 201673524-0
 ----------------------
 
 # Información
